@@ -16,8 +16,8 @@ class _CreateAccountPageState extends State<CreateAccountPage>
 
   @override
   void initState() {
-    controller =
-        AnimationController(duration: const Duration(seconds: 1), vsync: this);
+    controller = AnimationController(
+        duration: const Duration(milliseconds: 600), vsync: this);
 
     opacity = Tween<double>(begin: 0.0, end: 1.0)
         .animate(CurvedAnimation(parent: controller, curve: Curves.easeIn))
