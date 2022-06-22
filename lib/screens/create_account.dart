@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:task_manager/screens/start.dart';
+import 'package:task_manager/utils/animators.dart';
 
 class CreateAccountPage extends StatefulWidget {
   const CreateAccountPage({Key? key}) : super(key: key);
@@ -11,22 +12,38 @@ class CreateAccountPage extends StatefulWidget {
 
 class _CreateAccountPageState extends State<CreateAccountPage>
     with TickerProviderStateMixin {
-  late Animation<double> opacity;
-  late AnimationController controller;
+  late AnimationController _animController;
+  late Animation<double> controller;
+
+  bool isVisible = false;
 
   @override
   void initState() {
-    controller = AnimationController(
-        duration: const Duration(milliseconds: 600), vsync: this);
-
-    opacity = Tween<double>(begin: 0.0, end: 1.0)
-        .animate(CurvedAnimation(parent: controller, curve: Curves.easeIn))
+    super.initState();
+    _animController = AnimationController(
+        duration: const Duration(milliseconds: 1000), vsync: this)
       ..addListener(() {
         setState(() {});
+      })
+      ..addStatusListener((AnimationStatus status) {
+        if (status == AnimationStatus.completed) {
+          Navigator.push(context,
+              MaterialPageRoute(builder: ((context) => const StartPage())));
+        }
       });
 
-    controller.forward();
-    super.initState();
+    controller = Tween<double>(begin: 0.0, end: 1.0).animate(
+        CurvedAnimation(parent: _animController, curve: Curves.easeOut));
+
+    setState(() {
+      isVisible = true;
+    });
+  }
+
+  @override
+  void dispose() {
+    _animController.dispose();
+    super.dispose();
   }
 
   @override
@@ -36,16 +53,17 @@ class _CreateAccountPageState extends State<CreateAccountPage>
           statusBarColor: Colors.transparent,
         ),
         child: Scaffold(
-          backgroundColor: Colors.blueGrey,
+          backgroundColor: Colors.black,
           body: CustomPaint(
             size: Size(MediaQuery.of(context).size.width,
                 MediaQuery.of(context).size.height),
-            painter: Painter(),
+            painter: GetStartedPagePainter(controller),
             child: Center(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 40.0),
-                child: Opacity(
-                  opacity: opacity.value,
+                child: AnimatedOpacity(
+                  opacity: isVisible ? 1.0 : 0.0,
+                  duration: const Duration(milliseconds: 500),
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 20.0),
                     height: 350,
@@ -67,37 +85,23 @@ class _CreateAccountPageState extends State<CreateAccountPage>
                         const Align(
                           alignment: Alignment.centerLeft,
                           child: Text(
-                            "Email",
+                            "What should we call you??",
                             style:
-                                TextStyle(color: Colors.black, fontSize: 20.0),
+                                TextStyle(color: Colors.black, fontSize: 25.0),
+                            textAlign: TextAlign.center,
                           ),
                         ),
-                        const TextField(),
                         const SizedBox(
-                          height: 50,
-                        ),
-                        const Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            "Password",
-                            style:
-                                TextStyle(color: Colors.black, fontSize: 20.0),
-                          ),
+                          height: 70,
                         ),
                         const TextField(),
                         const Spacer(),
                         TextButton(
                             onPressed: () {
-                              Navigator.pushReplacement(
-                                context,
-                                PageRouteBuilder(
-                                  pageBuilder:
-                                      (context, animation1, animation2) =>
-                                          const StartPage(),
-                                  // transitionDuration: Duration.zero,
-                                  // reverseTransitionDuration: Duration.zero,
-                                ),
-                              );
+                              setState(() {
+                                isVisible = false;
+                              });
+                              _animController.forward();
                             },
                             child: const Text(
                               "Already have an account? Log in!",
@@ -113,42 +117,4 @@ class _CreateAccountPageState extends State<CreateAccountPage>
           ),
         ));
   }
-}
-
-class Painter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    Paint painter0 = Paint()
-      ..color = Colors.white
-      ..style = PaintingStyle.fill;
-
-    Path paintPath0 = Path();
-    paintPath0.moveTo(0, size.height * 0.3);
-    paintPath0.lineTo(0, size.height);
-    paintPath0.lineTo(size.width, size.height);
-    paintPath0.lineTo(size.width, size.height * 0.2);
-    paintPath0.quadraticBezierTo(
-        size.width * 0.7, size.height * 0.1, 0, size.height * 0.3);
-    paintPath0.close();
-
-    canvas.drawPath(paintPath0, painter0);
-
-    Paint painter1 = Paint()
-      ..color = Colors.black
-      ..style = PaintingStyle.fill;
-
-    Path painterPath1 = Path();
-    painterPath1.moveTo(0, size.height * 0.9);
-    painterPath1.lineTo(0, size.height);
-    painterPath1.lineTo(size.width, size.height);
-    painterPath1.lineTo(size.width, size.height * 0.8);
-    painterPath1.quadraticBezierTo(
-        size.width * 0.6, size.height * 0.6, 0, size.height * 0.9);
-    painterPath1.close();
-
-    canvas.drawPath(painterPath1, painter1);
-  }
-
-  @override
-  bool shouldRepaint(CustomPainter oldDelegate) => false;
 }
