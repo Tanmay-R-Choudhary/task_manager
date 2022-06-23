@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:task_manager/screens/create_account.dart';
-import 'package:task_manager/utils/animators.dart';
+import 'package:task_manager/utils/screen_backgrounds.dart';
 
 class StartPage extends StatefulWidget {
   const StartPage({Key? key}) : super(key: key);
@@ -54,7 +55,7 @@ class _StartPageState extends State<StartPage> with TickerProviderStateMixin {
           body: CustomPaint(
             size: Size(MediaQuery.of(context).size.width,
                 MediaQuery.of(context).size.height),
-            painter: GetStartedPagePainter(controller),
+            painter: GetStartedPagePainter(paintSplashIndicator: controller),
             child: SizedBox(
               height: MediaQuery.of(context).size.height,
               width: MediaQuery.of(context).size.width,
@@ -64,25 +65,7 @@ class _StartPageState extends State<StartPage> with TickerProviderStateMixin {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(
-                      height: 40.0,
-                    ),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: AnimatedOpacity(
-                        opacity: isVisible ? 1.0 : 0.0,
-                        duration: const Duration(milliseconds: 500),
-                        child: TextButton(
-                            onPressed: () {
-                              print("go to sign in");
-                            },
-                            child: const Text(
-                              "Sign in",
-                              style: TextStyle(color: Colors.white),
-                            )),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 60,
+                      height: 100,
                     ),
                     Align(
                       alignment: Alignment.center,
@@ -96,27 +79,19 @@ class _StartPageState extends State<StartPage> with TickerProviderStateMixin {
                       ),
                     ),
                     const Spacer(),
-                    AnimatedOpacity(
-                      opacity: isVisible ? 1.0 : 0.0,
-                      duration: const Duration(milliseconds: 500),
-                      child: const Text(
-                        "A new wave",
-                        style: TextStyle(
-                          fontSize: 50.0,
-                          color: Colors.white,
-                        ),
+                    const Text(
+                      "A new wave",
+                      style: TextStyle(
+                        fontSize: 50.0,
+                        color: Colors.white,
                       ),
                     ),
-                    AnimatedOpacity(
-                      opacity: isVisible ? 1.0 : 0.0,
-                      duration: const Duration(milliseconds: 500),
-                      child: const Text(
-                        "of ORGANISATION",
-                        style: TextStyle(
-                            fontSize: 30.0,
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold),
-                      ),
+                    const Text(
+                      "of ORGANISATION",
+                      style: TextStyle(
+                          fontSize: 30.0,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(
                       height: 70,
@@ -147,7 +122,7 @@ class _StartPageState extends State<StartPage> with TickerProviderStateMixin {
                             ),
                             Spacer(),
                             Icon(
-                              Icons.forward,
+                              FontAwesomeIcons.arrowRight,
                               color: Colors.white,
                             ),
                             SizedBox(

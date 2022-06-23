@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class GetStartedPagePainter extends CustomPainter {
   final Animation<double> paintSplashIndicator;
-  GetStartedPagePainter(this.paintSplashIndicator);
+  const GetStartedPagePainter({required this.paintSplashIndicator});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -67,7 +67,7 @@ class GetStartedPagePainter extends CustomPainter {
         size.height * (1.0 - 0.2 * (1 - paintSplashIndicator.value))); // 0.8
     painterPath2.quadraticBezierTo(
         size.width * 0.6 * (1 - paintSplashIndicator.value),
-        size.height * (1.0 - 0.4 * (1 - paintSplashIndicator.value)),
+        size.height * (1.0 - 0.3 * (1 - paintSplashIndicator.value)),
         0,
         size.height *
             (1.0 - 0.1 * (1 - paintSplashIndicator.value))); // 0.6, 0.6, 0.9
@@ -78,4 +78,55 @@ class GetStartedPagePainter extends CustomPainter {
 
   @override
   bool shouldRepaint(CustomPainter oldDelegate) => true;
+}
+
+class CreateAccountPagePainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    Paint painter1 = Paint()
+      ..color = Colors.white
+      ..style = PaintingStyle.fill
+      ..strokeWidth = 10.0;
+
+    Path paintPath1 = Path();
+    paintPath1.moveTo(0, 0.3 * size.height);
+    paintPath1.lineTo(0, size.height);
+    paintPath1.lineTo(size.width, size.height);
+    paintPath1.lineTo(size.width, size.height * 0.2);
+
+    paintPath1.quadraticBezierTo(
+        size.width * 0.7, size.height * 0.1, 0, 0.3 * size.height);
+    paintPath1.close();
+
+    canvas.drawPath(paintPath1, painter1);
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) => true;
+}
+
+class CreateAccountPageClipPath extends CustomClipper<Path> {
+  final Animation<double> paintSplashIndicator;
+
+  CreateAccountPageClipPath({required this.paintSplashIndicator});
+
+  @override
+  Path getClip(Size size) {
+    Path path = Path();
+    path.moveTo(0, size.height * 0.9 * paintSplashIndicator.value);
+    path.lineTo(0, size.height);
+    path.lineTo(size.width, size.height);
+    path.lineTo(size.width, size.height * 0.8 * paintSplashIndicator.value);
+    path.quadraticBezierTo(
+        size.width * 0.6 * paintSplashIndicator.value,
+        size.height * 0.7 * paintSplashIndicator.value,
+        0,
+        size.height * 0.9 * paintSplashIndicator.value);
+    path.close();
+
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) => true;
 }
