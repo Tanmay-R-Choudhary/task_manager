@@ -30,8 +30,12 @@ class _CreateAccountPageState extends State<CreateAccountPage>
       })
       ..addStatusListener((AnimationStatus status) {
         if (status == AnimationStatus.completed) {
-          Navigator.push(context,
-              MaterialPageRoute(builder: ((context) => const LogInPage())));
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: ((context) => LogInPage(
+                        scrSize: MediaQuery.of(context).size,
+                      ))));
         }
       });
 
