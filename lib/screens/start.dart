@@ -73,7 +73,7 @@ class _StartPageState extends State<StartPage> with TickerProviderStateMixin {
                         opacity: isVisible ? 1.0 : 0.0,
                         duration: const Duration(milliseconds: 500),
                         child: const Text(
-                          "Simpl",
+                          "Timely",
                           style: TextStyle(fontSize: 70, color: Colors.white),
                         ),
                       ),

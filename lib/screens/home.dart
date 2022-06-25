@@ -32,7 +32,10 @@ class _HomePageState extends State<HomePage> {
         drawer: Drawer(
           backgroundColor: Colors.blueGrey,
           child: Center(
-              child: TextButton(
+              child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              TextButton(
                   child: const Text("add to database"),
                   onPressed: () {
                     //TODO: REMOVE THIS FROM HERE
@@ -47,7 +50,19 @@ class _HomePageState extends State<HomePage> {
                     //     MaterialPageRoute(
                     //         builder: (context) => LogInPage(
                     //             scrSize: MediaQuery.of(context).size)));
-                  })),
+                  }),
+              TextButton(
+                  child: const Text("logout"),
+                  onPressed: () {
+                    context.read<AuthenticationService>().logOut();
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => LogInPage(
+                                scrSize: MediaQuery.of(context).size)));
+                  }),
+            ],
+          )),
         ),
         body: SafeArea(
           child: Padding(
