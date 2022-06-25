@@ -1,7 +1,14 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
+import 'package:task_manager/custom_widgets/groups.dart';
+import 'package:task_manager/screens/log_in.dart';
 import 'package:task_manager/screens/notifications.dart';
+import 'package:task_manager/utils/firebase_authentication_service.dart';
+import 'package:task_manager/utils/firebase_database_service.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -12,6 +19,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   bool notificationsAvailable = false;
+  User user = FirebaseAuth.instance.currentUser!;
 
   @override
   Widget build(BuildContext context) {
@@ -21,6 +29,26 @@ class _HomePageState extends State<HomePage> {
       ),
       child: Scaffold(
         backgroundColor: Colors.black,
+        drawer: Drawer(
+          backgroundColor: Colors.blueGrey,
+          child: Center(
+              child: TextButton(
+                  child: const Text("add to database"),
+                  onPressed: () {
+                    //TODO: REMOVE THIS FROM HERE
+                    addGroup(user, "Physics Engine", "Your teams", 0);
+                    addGroup(user, "Simpl", "Personal Projects", 1);
+
+                    getAllGroups(user);
+
+                    // context.read<AuthenticationService>().logOut();
+                    // Navigator.push(
+                    //     context,
+                    //     MaterialPageRoute(
+                    //         builder: (context) => LogInPage(
+                    //             scrSize: MediaQuery.of(context).size)));
+                  })),
+        ),
         body: SafeArea(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10.0),
@@ -117,96 +145,5 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
-  }
-}
-
-class Groups extends StatefulWidget {
-  final String groupTitle;
-  const Groups({Key? key, required this.groupTitle}) : super(key: key);
-
-  @override
-  State<Groups> createState() => _GroupsState();
-}
-
-class _GroupsState extends State<Groups> {
-  List<Widget> clones(Widget w) {
-    List<Widget> res = [];
-
-    for (int i = 0; i < 20; i++) {
-      res.add(w);
-      res.add(const SizedBox(
-        width: 10.0,
-      ));
-    }
-
-    return res;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      child: Column(children: [
-        Row(
-          children: [
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                widget.groupTitle,
-                style: const TextStyle(color: Colors.white, fontSize: 25.0),
-              ),
-            ),
-            const Spacer(),
-            const Icon(
-              FontAwesomeIcons.ellipsisVertical,
-              color: Colors.white,
-            ),
-            const SizedBox(
-              width: 20,
-            ),
-          ],
-        ),
-        const SizedBox(
-          height: 20.0,
-        ),
-        SizedBox(
-          height: 160.0,
-          child: Theme(
-            data: Theme.of(context).copyWith(
-                colorScheme: ColorScheme.fromSwatch(accentColor: Colors.white)),
-            child: ListView(
-              padding: const EdgeInsets.only(left: 20.0),
-              scrollDirection: Axis.horizontal,
-              children: clones(const GroupCard(
-                title: "Team / Project",
-              )),
-            ),
-          ),
-        ),
-        const SizedBox(
-          height: 30.0,
-        )
-      ]),
-    );
-  }
-}
-
-class GroupCard extends StatefulWidget {
-  final String title;
-  const GroupCard({Key? key, required this.title}) : super(key: key);
-
-  @override
-  State<GroupCard> createState() => _GroupCardState();
-}
-
-class _GroupCardState extends State<GroupCard> {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-        height: 100.0,
-        width: 150.0,
-        decoration: const BoxDecoration(
-            color: Colors.blueGrey,
-            borderRadius: BorderRadius.all(Radius.circular(20.0))),
-        child: Center(child: Text(widget.title)));
   }
 }

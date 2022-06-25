@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
+import 'package:task_manager/screens/home.dart';
 import 'package:task_manager/screens/log_in.dart';
+import 'package:task_manager/utils/firebase_authentication_service.dart';
 import 'package:task_manager/utils/screen_backgrounds.dart';
 
 class CreateAccountPage extends StatefulWidget {
@@ -13,9 +16,9 @@ class CreateAccountPage extends StatefulWidget {
 
 class _CreateAccountPageState extends State<CreateAccountPage>
     with TickerProviderStateMixin {
-  TextEditingController username = TextEditingController();
-  TextEditingController email = TextEditingController();
-  TextEditingController password = TextEditingController();
+  TextEditingController usernameController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
 
   late AnimationController _animController;
   late Animation<double> controller;
@@ -87,7 +90,7 @@ class _CreateAccountPageState extends State<CreateAccountPage>
                           height: 50,
                         ),
                         TextField(
-                          controller: username,
+                          controller: usernameController,
                           cursorColor: Colors.black,
                           decoration: const InputDecoration(
                               border: InputBorder.none,
@@ -102,7 +105,7 @@ class _CreateAccountPageState extends State<CreateAccountPage>
                           height: 30,
                         ),
                         TextField(
-                          controller: email,
+                          controller: emailController,
                           cursorColor: Colors.black,
                           decoration: const InputDecoration(
                               border: InputBorder.none, hintText: "Email"),
@@ -118,7 +121,7 @@ class _CreateAccountPageState extends State<CreateAccountPage>
                         Row(children: [
                           Expanded(
                               child: TextField(
-                            controller: password,
+                            controller: passwordController,
                             cursorColor: Colors.black,
                             decoration: const InputDecoration(
                               border: InputBorder.none,
@@ -130,10 +133,13 @@ class _CreateAccountPageState extends State<CreateAccountPage>
                           ),
                           GestureDetector(
                             onTap: () {
-                              // TODO: implement firebase auth
-                              print(username.value);
-                              print(email.value);
-                              print(password.value);
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => const HomePage()));
+                              context.read<AuthenticationService>().signUp(
+                                  email: emailController.text.trim(),
+                                  password: passwordController.text.trim());
                             },
                             child: Container(
                                 height: 35,

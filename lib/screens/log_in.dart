@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:task_manager/screens/home.dart';
 import 'dart:math';
+
+import 'package:task_manager/utils/firebase_authentication_service.dart';
 
 class LogInPage extends StatefulWidget {
   final Size scrSize;
@@ -13,6 +16,9 @@ class LogInPage extends StatefulWidget {
 class _LogInPageState extends State<LogInPage> with TickerProviderStateMixin {
   late AnimationController _animController;
   late Animation<Offset> controller;
+
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
 
   @override
   void initState() {
@@ -59,11 +65,13 @@ class _LogInPageState extends State<LogInPage> with TickerProviderStateMixin {
                 child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const TextField(
-                        style: TextStyle(color: Colors.white, fontSize: 20.0),
+                      TextField(
+                        controller: emailController,
+                        style: const TextStyle(
+                            color: Colors.white, fontSize: 20.0),
                         cursorColor: Colors.pink,
                         cursorHeight: 30.0,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                             focusedBorder: OutlineInputBorder(
                                 borderSide: BorderSide(color: Colors.white),
                                 borderRadius:
@@ -80,11 +88,13 @@ class _LogInPageState extends State<LogInPage> with TickerProviderStateMixin {
                       const SizedBox(
                         height: 50.0,
                       ),
-                      const TextField(
-                        style: TextStyle(color: Colors.white, fontSize: 20.0),
+                      TextField(
+                        controller: passwordController,
+                        style: const TextStyle(
+                            color: Colors.white, fontSize: 20.0),
                         cursorColor: Colors.pink,
                         cursorHeight: 30.0,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                             focusedBorder: OutlineInputBorder(
                                 borderSide: BorderSide(color: Colors.white),
                                 borderRadius:
@@ -105,6 +115,9 @@ class _LogInPageState extends State<LogInPage> with TickerProviderStateMixin {
                         alignment: Alignment.centerLeft,
                         child: GestureDetector(
                           onTap: () {
+                            context.read<AuthenticationService>().logIn(
+                                email: emailController.text.trim(),
+                                password: passwordController.text.trim());
                             _animController.reverse();
                           },
                           child: Container(
