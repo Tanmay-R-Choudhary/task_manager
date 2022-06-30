@@ -1,28 +1,21 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:provider/provider.dart';
+import 'package:get/get.dart';
 import 'package:task_manager/custom_widgets/groups.dart';
-import 'package:task_manager/screens/log_in.dart';
+import 'package:task_manager/screens/home/controller/home_controller.dart';
+import 'package:task_manager/screens/log_in/view/log_in.dart';
 import 'package:task_manager/screens/notifications.dart';
 import 'package:task_manager/utils/firebase_authentication_service.dart';
-import 'package:task_manager/utils/firebase_database_service.dart';
+// import 'package:task_manager/utils/firebase_database_service.dart';
 
-class HomePage extends StatefulWidget {
+class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
 
   @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  bool notificationsAvailable = false;
-  User user = FirebaseAuth.instance.currentUser!;
-
-  @override
   Widget build(BuildContext context) {
+    final homeController = Get.find<HomeController>();
+
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
@@ -38,28 +31,14 @@ class _HomePageState extends State<HomePage> {
               TextButton(
                   child: const Text("add to database"),
                   onPressed: () {
-                    //TODO: REMOVE THIS FROM HERE
-                    addGroup(user, "Physics Engine", "Your teams", 0);
-                    addGroup(user, "Simpl", "Personal Projects", 1);
-
-                    getAllGroups(user);
-
-                    // context.read<AuthenticationService>().logOut();
-                    // Navigator.push(
-                    //     context,
-                    //     MaterialPageRoute(
-                    //         builder: (context) => LogInPage(
-                    //             scrSize: MediaQuery.of(context).size)));
+                    //TODO: CONFIGURE DATABASE WITH GETX
                   }),
               TextButton(
                   child: const Text("logout"),
                   onPressed: () {
-                    context.read<AuthenticationService>().logOut();
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => LogInPage(
-                                scrSize: MediaQuery.of(context).size)));
+                    AuthenticationServiceController.instance.signOut();
+                    Get.to(
+                        () => LogInPage(scrSize: MediaQuery.of(context).size));
                   }),
             ],
           )),
@@ -83,20 +62,16 @@ class _HomePageState extends State<HomePage> {
                         const Spacer(),
                         GestureDetector(
                           onTap: () {
-                            setState(() {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          const NotificationPage()));
-                            });
+                            Get.to(() => const NotificationPage());
                           },
-                          child: Icon(
-                            FontAwesomeIcons.bell,
-                            color: notificationsAvailable
-                                ? Colors.pink
-                                : Colors.white,
-                            size: 30,
+                          child: Obx(
+                            () => Icon(
+                              FontAwesomeIcons.bell,
+                              color: homeController.notificationsAvailable.value
+                                  ? Colors.pink
+                                  : Colors.white,
+                              size: 30,
+                            ),
                           ),
                         )
                       ],
@@ -124,9 +99,8 @@ class _HomePageState extends State<HomePage> {
                       const Spacer(),
                       GestureDetector(
                         onTap: () {
-                          setState(() {
-                            notificationsAvailable = !notificationsAvailable;
-                          });
+                          homeController.notificationsAvailable.value =
+                              !homeController.notificationsAvailable.value;
                         },
                         child: Container(
                           height: 50.0,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:task_manager/screens/home.dart';
+import 'package:get/get.dart';
+import 'package:task_manager/screens/home/binding/home_binding.dart';
+import 'package:task_manager/screens/home/view/home.dart';
 import 'dart:math';
 
 import 'package:task_manager/utils/firebase_authentication_service.dart';
@@ -34,8 +35,7 @@ class _LogInPageState extends State<LogInPage> with TickerProviderStateMixin {
       })
       ..addStatusListener((status) {
         if (status == AnimationStatus.dismissed) {
-          Navigator.push(context,
-              MaterialPageRoute(builder: ((context) => const HomePage())));
+          Get.to(() => const HomePage(), binding: HomeBindinds());
         }
       });
 
@@ -115,9 +115,9 @@ class _LogInPageState extends State<LogInPage> with TickerProviderStateMixin {
                         alignment: Alignment.centerLeft,
                         child: GestureDetector(
                           onTap: () {
-                            context.read<AuthenticationService>().logIn(
-                                email: emailController.text.trim(),
-                                password: passwordController.text.trim());
+                            AuthenticationServiceController.instance.signIn(
+                                emailController.text.trim(),
+                                passwordController.text.trim());
                             _animController.reverse();
                           },
                           child: Container(

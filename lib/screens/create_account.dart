@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
-import 'package:task_manager/screens/home.dart';
-import 'package:task_manager/screens/log_in.dart';
+import 'package:task_manager/screens/home/view/home.dart';
+import 'package:task_manager/screens/log_in/view/log_in.dart';
 import 'package:task_manager/utils/firebase_authentication_service.dart';
 import 'package:task_manager/utils/screen_backgrounds.dart';
 
