@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:task_manager/screens/notifications/controller/notifications_controller.dart';
 
-class NotificationPage extends StatefulWidget {
-  const NotificationPage({Key? key}) : super(key: key);
+class NotificationsPage extends GetView<NotificationsController> {
+  const NotificationsPage({Key? key}) : super(key: key);
 
-  @override
-  State<NotificationPage> createState() => _NotificationPageState();
-}
-
-class _NotificationPageState extends State<NotificationPage> {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(

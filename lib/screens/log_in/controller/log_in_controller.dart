@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class LogInPageController extends GetxController
-    with GetSingleTickerProviderStateMixin {
+    with GetTickerProviderStateMixin {
   late AnimationController _animController;
   late Animation<Offset> controller;
   late Size scrSize;
@@ -35,7 +35,7 @@ class LogInPageController extends GetxController
 
   @override
   void onClose() {
-    super.onClose();
     _animController.dispose();
+    super.onClose();
   }
 }

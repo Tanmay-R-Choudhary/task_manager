@@ -4,19 +4,16 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:task_manager/custom_widgets/groups.dart';
 import 'package:task_manager/screens/home/controller/home_controller.dart';
-import 'package:task_manager/screens/log_in/binding/log_in_binding.dart';
-import 'package:task_manager/screens/log_in/view/log_in.dart';
-import 'package:task_manager/screens/notifications.dart';
+import 'package:task_manager/screens/notifications/binding/notifications_binding.dart';
+import 'package:task_manager/screens/notifications/view/notifications.dart';
 import 'package:task_manager/utils/firebase_authentication_service.dart';
 // import 'package:task_manager/utils/firebase_database_service.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends GetView<HomeController> {
   const HomePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final homeController = Get.find<HomeController>();
-
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
@@ -38,16 +35,14 @@ class HomePage extends StatelessWidget {
                   child: const Text("logout"),
                   onPressed: () {
                     AuthenticationServiceController.instance.signOut();
-                    Get.to(() => const LogInPage(),
-                        binding: LogInPageBinding(
-                            scrSize: MediaQuery.of(context).size));
                   }),
             ],
           )),
         ),
         body: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10.0),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
             child: Theme(
               data: Theme.of(context).copyWith(
                   colorScheme:
@@ -58,18 +53,20 @@ class HomePage extends StatelessWidget {
                   child: Column(children: [
                     Row(
                       children: [
-                        const Text("Hello, Tanmay!",
-                            style:
-                                TextStyle(color: Colors.white, fontSize: 30.0)),
+                        Text(
+                            "👋 Hello, ${AuthenticationServiceController.instance.auth.currentUser?.displayName ?? "err..."}!",
+                            style: const TextStyle(
+                                color: Colors.white, fontSize: 30.0)),
                         const Spacer(),
                         GestureDetector(
                           onTap: () {
-                            Get.to(() => const NotificationPage());
+                            Get.to(() => const NotificationsPage(),
+                                binding: NotificationsBinding());
                           },
                           child: Obx(
                             () => Icon(
                               FontAwesomeIcons.bell,
-                              color: homeController.notificationsAvailable.value
+                              color: controller.notificationsAvailable.value
                                   ? Colors.pink
                                   : Colors.white,
                               size: 30,
@@ -101,8 +98,8 @@ class HomePage extends StatelessWidget {
                       const Spacer(),
                       GestureDetector(
                         onTap: () {
-                          homeController.notificationsAvailable.value =
-                              !homeController.notificationsAvailable.value;
+                          controller.notificationsAvailable.value =
+                              !controller.notificationsAvailable.value;
                         },
                         child: Container(
                           height: 50.0,

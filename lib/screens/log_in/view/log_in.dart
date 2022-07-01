@@ -4,20 +4,18 @@ import 'package:task_manager/screens/log_in/controller/log_in_controller.dart';
 
 import 'package:task_manager/utils/firebase_authentication_service.dart';
 
-class LogInPage extends StatelessWidget {
+class LogInPage extends GetView<LogInPageController> {
   const LogInPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final logInPageController = Get.find<LogInPageController>();
-
     var emailController = TextEditingController();
     var passwordController = TextEditingController();
 
     return Scaffold(
         backgroundColor: Colors.black,
         body: SlideTransition(
-          position: logInPageController.controller,
+          position: controller.controller,
           child: Stack(
             children: [
               Padding(
@@ -78,7 +76,11 @@ class LogInPage extends StatelessWidget {
                             AuthenticationServiceController.instance.signIn(
                                 emailController.text.trim(),
                                 passwordController.text.trim());
-                            logInPageController.playAnimationReverse();
+                            if (emailController.text.trim().isEmpty == false &&
+                                passwordController.text.trim().isEmpty ==
+                                    false) {
+                              controller.playAnimationReverse();
+                            }
                           },
                           child: Container(
                             height: 50,

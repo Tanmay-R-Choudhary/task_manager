@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:get/get.dart';
-import 'package:task_manager/screens/start.dart';
+import 'package:task_manager/screens/start/binding/start_binding.dart';
+import 'package:task_manager/screens/start/view/start.dart';
 import 'package:task_manager/utils/firebase_authentication_service.dart';
 import 'firebase_options.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
-    name: "dev Project",
     options: DefaultFirebaseOptions.currentPlatform,
   ).then((value) => Get.put(AuthenticationServiceController()));
   runApp(const MyApp());
@@ -27,6 +27,7 @@ class MyApp extends StatelessWidget {
             TargetPlatform.android: NoTransitionsBuilder(),
             TargetPlatform.iOS: NoTransitionsBuilder(),
           })),
+      initialBinding: StartPageBinding(),
       home: const StartPage(),
     );
   }
