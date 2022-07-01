@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:provider/provider.dart';
+import 'package:get/get.dart';
 import 'package:task_manager/screens/home/view/home.dart';
+import 'package:task_manager/screens/log_in/binding/log_in_binding.dart';
 import 'package:task_manager/screens/log_in/view/log_in.dart';
 import 'package:task_manager/utils/firebase_authentication_service.dart';
 import 'package:task_manager/utils/screen_backgrounds.dart';
@@ -33,12 +34,8 @@ class _CreateAccountPageState extends State<CreateAccountPage>
       })
       ..addStatusListener((AnimationStatus status) {
         if (status == AnimationStatus.completed) {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: ((context) => LogInPage(
-                        scrSize: MediaQuery.of(context).size,
-                      ))));
+          Get.to(() => const LogInPage(),
+              binding: LogInPageBinding(scrSize: MediaQuery.of(context).size));
         }
       });
 
@@ -137,9 +134,10 @@ class _CreateAccountPageState extends State<CreateAccountPage>
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) => const HomePage()));
-                              context.read<AuthenticationService>().signUp(
-                                  email: emailController.text.trim(),
-                                  password: passwordController.text.trim());
+                              AuthenticationServiceController.instance.signUp(
+                                  usernameController.text.trim(),
+                                  emailController.text.trim(),
+                                  passwordController.text.trim());
                             },
                             child: Container(
                                 height: 35,
@@ -167,7 +165,10 @@ class _CreateAccountPageState extends State<CreateAccountPage>
                           child: TextButton(
                               onPressed: () {
                                 _animController.forward();
-                              }, //TODO: Implement function for switching to log-in page
+                                // Get.to(() => const LogInPage(),
+                                //     binding: LogInPageBinding(
+                                //         scrSize: MediaQuery.of(context).size));
+                              },
                               child: const Text(
                                 "Already have an account? Log in!",
                                 style: TextStyle(

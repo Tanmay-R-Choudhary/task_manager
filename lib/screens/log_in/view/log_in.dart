@@ -1,63 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:task_manager/screens/home/binding/home_binding.dart';
-import 'package:task_manager/screens/home/view/home.dart';
-import 'dart:math';
+import 'package:task_manager/screens/log_in/controller/log_in_controller.dart';
 
 import 'package:task_manager/utils/firebase_authentication_service.dart';
 
-class LogInPage extends StatefulWidget {
-  final Size scrSize;
-  const LogInPage({Key? key, required this.scrSize}) : super(key: key);
-
-  @override
-  State<LogInPage> createState() => _LogInPageState();
-}
-
-class _LogInPageState extends State<LogInPage> with TickerProviderStateMixin {
-  late AnimationController _animController;
-  late Animation<Offset> controller;
-
-  TextEditingController emailController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
-
-  @override
-  void initState() {
-    _animController = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 1500));
-
-    controller = Tween<Offset>(
-            begin: Offset(widget.scrSize.width / 300, 0.0), end: Offset.zero)
-        .animate(
-            CurvedAnimation(parent: _animController, curve: Curves.elasticOut))
-      ..addListener(() {
-        setState(() {});
-      })
-      ..addStatusListener((status) {
-        if (status == AnimationStatus.dismissed) {
-          Get.to(() => const HomePage(), binding: HomeBindinds());
-        }
-      });
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _animController.forward();
-    });
-
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    _animController.dispose();
-    super.dispose();
-  }
+class LogInPage extends StatelessWidget {
+  const LogInPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final logInPageController = Get.find<LogInPageController>();
+
+    var emailController = TextEditingController();
+    var passwordController = TextEditingController();
+
     return Scaffold(
         backgroundColor: Colors.black,
         body: SlideTransition(
-          position: controller,
+          position: logInPageController.controller,
           child: Stack(
             children: [
               Padding(
@@ -118,7 +78,7 @@ class _LogInPageState extends State<LogInPage> with TickerProviderStateMixin {
                             AuthenticationServiceController.instance.signIn(
                                 emailController.text.trim(),
                                 passwordController.text.trim());
-                            _animController.reverse();
+                            logInPageController.playAnimationReverse();
                           },
                           child: Container(
                             height: 50,

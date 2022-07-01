@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
+import 'package:task_manager/screens/home/binding/home_binding.dart';
 import 'package:task_manager/screens/home/view/home.dart';
 import 'package:task_manager/screens/start.dart';
 
@@ -60,7 +61,7 @@ class AuthenticationServiceController extends GetxController {
     if (user == null) {
       Get.offAll(() => const StartPage());
     } else {
-      Get.offAll(() => const HomePage());
+      Get.offAll(() => const HomePage(), binding: HomeBindinds());
     }
   }
 

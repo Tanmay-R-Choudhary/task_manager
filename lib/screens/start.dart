@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
 import 'package:task_manager/screens/create_account.dart';
 import 'package:task_manager/utils/screen_backgrounds.dart';
 
@@ -27,10 +28,7 @@ class _StartPageState extends State<StartPage> with TickerProviderStateMixin {
       })
       ..addStatusListener((AnimationStatus status) {
         if (status == AnimationStatus.completed) {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: ((context) => const CreateAccountPage())));
+          Get.to(() => const CreateAccountPage());
         }
       });
 

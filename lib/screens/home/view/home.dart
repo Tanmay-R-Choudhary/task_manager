@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:task_manager/custom_widgets/groups.dart';
 import 'package:task_manager/screens/home/controller/home_controller.dart';
+import 'package:task_manager/screens/log_in/binding/log_in_binding.dart';
 import 'package:task_manager/screens/log_in/view/log_in.dart';
 import 'package:task_manager/screens/notifications.dart';
 import 'package:task_manager/utils/firebase_authentication_service.dart';
@@ -37,8 +38,9 @@ class HomePage extends StatelessWidget {
                   child: const Text("logout"),
                   onPressed: () {
                     AuthenticationServiceController.instance.signOut();
-                    Get.to(
-                        () => LogInPage(scrSize: MediaQuery.of(context).size));
+                    Get.to(() => const LogInPage(),
+                        binding: LogInPageBinding(
+                            scrSize: MediaQuery.of(context).size));
                   }),
             ],
           )),
