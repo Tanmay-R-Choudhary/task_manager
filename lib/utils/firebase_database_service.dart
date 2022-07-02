@@ -1,36 +1,58 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:get/get.dart';
 
-final databaseInstance = FirebaseDatabase.instance;
+class DatabaseServiceController extends GetxController {
+  static DatabaseServiceController instance = Get.find();
+  late User? currentUser;
 
-Future<void> addGroup(
-    User user, String groupTitle, String categoryTitle, int newIdx) async {
-  var id = databaseInstance.ref().child('groups/').push();
-  id.update({'category': categoryTitle, 'title': groupTitle});
+  DatabaseServiceController({required this.currentUser});
 
-  databaseInstance
-      .ref('users/${user.uid}')
-      .update({newIdx.toString(): id.key.toString()});
-}
+  // late Rx<Future<DataSnapshot?>> _userData;
+  final List<DataSnapshot> _userData = [];
 
-Future<List<DataSnapshot>> getAllGroups(User user) async {
-  DataSnapshot currUserData =
-      await databaseInstance.ref('users/' + user.uid).get();
+  FirebaseDatabase database = FirebaseDatabase.instance;
 
-  if (currUserData.value == null) {
-    return [];
-  } else {
-    List<DataSnapshot> groupsInfo = [];
+  late Rx<DatabaseReference> dbUserRef;
 
-    var data;
+  Future<void> _initialiseData() async {
+    await dbUserRef.value.once().then((value) {
+      value.snapshot.child('${currentUser?.uid}').children.forEach((element) {
+        database.ref('groups/${element.value}').once().then((value) {
+          _userData.add(value.snapshot);
+        });
+      });
+    });
+  }
 
-    currUserData.exists ? data = currUserData.value : null;
+  List<DataSnapshot> get getUserData {
+    return _userData;
+  }
 
-    for (var i in data) {
-      groupsInfo.add(await databaseInstance.ref('groups/' + i[0]).get());
+  void addData(String category, String title) async {
+    var id_group = database.ref('groups/').push();
+    await id_group.set({'category': category, 'title': title});
+
+    print(currentUser?.uid);
+
+    database.ref('users/${currentUser?.uid}').push().set(id_group.key);
+  }
+
+  void printData() {
+    for (var e in _userData) {
+      print(e);
     }
+  }
 
-    print(groupsInfo);
-    return groupsInfo;
+  void updateData() {
+    _initialiseData();
+  }
+
+  @override
+  void onReady() {
+    super.onReady();
+    _initialiseData();
+    dbUserRef = Rx<DatabaseReference>(database.ref('users/'));
+    // dbUserRef.bindStream(dbUserRef.value.onChildChanged);
   }
 }

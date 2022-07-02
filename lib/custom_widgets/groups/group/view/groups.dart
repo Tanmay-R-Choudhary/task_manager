@@ -1,27 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:task_manager/custom_widgets/groups/group_card/view/group_card.dart';
 
-class Groups extends StatefulWidget {
+class Groups extends StatelessWidget {
   final String groupTitle;
-  const Groups({Key? key, required this.groupTitle}) : super(key: key);
-
-  @override
-  State<Groups> createState() => _GroupsState();
-}
-
-class _GroupsState extends State<Groups> {
-  List<Widget> clones(Widget w) {
-    List<Widget> res = [];
-
-    for (int i = 0; i < 20; i++) {
-      res.add(w);
-      res.add(const SizedBox(
-        width: 10.0,
-      ));
-    }
-
-    return res;
-  }
+  final List<GroupCard> cards;
+  const Groups({Key? key, required this.groupTitle, required this.cards})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +17,7 @@ class _GroupsState extends State<Groups> {
             Align(
               alignment: Alignment.centerLeft,
               child: Text(
-                widget.groupTitle,
+                groupTitle,
                 style: const TextStyle(color: Colors.white, fontSize: 25.0),
               ),
             ),
@@ -57,9 +42,7 @@ class _GroupsState extends State<Groups> {
             child: ListView(
               padding: const EdgeInsets.only(left: 20.0),
               scrollDirection: Axis.horizontal,
-              children: clones(const GroupCard(
-                title: "Team / Project",
-              )),
+              children: cards,
             ),
           ),
         ),
@@ -68,26 +51,5 @@ class _GroupsState extends State<Groups> {
         )
       ]),
     );
-  }
-}
-
-class GroupCard extends StatefulWidget {
-  final String title;
-  const GroupCard({Key? key, required this.title}) : super(key: key);
-
-  @override
-  State<GroupCard> createState() => _GroupCardState();
-}
-
-class _GroupCardState extends State<GroupCard> {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-        height: 100.0,
-        width: 150.0,
-        decoration: const BoxDecoration(
-            color: Colors.blueGrey,
-            borderRadius: BorderRadius.all(Radius.circular(20.0))),
-        child: Center(child: Text(widget.title)));
   }
 }
