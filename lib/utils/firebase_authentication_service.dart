@@ -22,7 +22,6 @@ class AuthenticationServiceController extends GetxController {
 
   _initaliseScreen(User? user) {
     if (user == null) {
-      print("this hit");
       Get.offAll(() => const StartPage(), binding: StartPageBinding());
     } else {
       Get.offAll(() => const HomePage(), binding: HomeBinding());

@@ -8,51 +8,35 @@ class DatabaseServiceController extends GetxController {
 
   DatabaseServiceController({required this.currentUser});
 
-  // late Rx<Future<DataSnapshot?>> _userData;
-  final List<DataSnapshot> _userData = [];
-
   FirebaseDatabase database = FirebaseDatabase.instance;
 
-  late Rx<DatabaseReference> dbUserRef;
+  late DatabaseReference userDataRef;
 
-  Future<void> _initialiseData() async {
-    await dbUserRef.value.once().then((value) {
-      value.snapshot.child('${currentUser?.uid}').children.forEach((element) {
-        database.ref('groups/${element.value}').once().then((value) {
-          _userData.add(value.snapshot);
-        });
-      });
-    });
-  }
+  late DatabaseReference groupsDataRef;
 
-  List<DataSnapshot> get getUserData {
-    return _userData;
-  }
-
-  void addData(String category, String title) async {
-    var id_group = database.ref('groups/').push();
-    await id_group.set({'category': category, 'title': title});
-
-    print(currentUser?.uid);
-
-    database.ref('users/${currentUser?.uid}').push().set(id_group.key);
-  }
-
-  void printData() {
-    for (var e in _userData) {
-      print(e);
-    }
-  }
-
-  void updateData() {
-    _initialiseData();
-  }
+  late DatabaseReference projectsDataRef;
 
   @override
-  void onReady() {
-    super.onReady();
-    _initialiseData();
-    dbUserRef = Rx<DatabaseReference>(database.ref('users/'));
-    // dbUserRef.bindStream(dbUserRef.value.onChildChanged);
+  void onInit() {
+    userDataRef = database.ref("users/${currentUser?.uid}");
+    groupsDataRef = database.ref("groups/");
+    projectsDataRef = database.ref("projects/");
+    super.onInit();
   }
+
+  void makeNewGroup(String groupTitle) async {
+    var id = groupsDataRef.push();
+    await id.set({'title': groupTitle});
+
+    await userDataRef.push().set(id.key);
+  }
+
+  void makeNewProject(String projectTitle) async {
+    var id = projectsDataRef.push();
+    await id.set({'title': projectTitle});
+
+    // groupsDataRef; TODO: get the group to which new project must be added
+  }
+
+  void deleteGroup() {}
 }

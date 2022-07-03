@@ -117,17 +117,20 @@ class CreateAccountPage extends GetView<CreateAccountPageController> {
                           thickness: 1.0,
                         ),
                         const Spacer(),
-                        Align(
-                          alignment: Alignment.center,
-                          child: GestureDetector(
-                              onTap: () {
-                                controller.playAnimationForward();
-                              },
-                              child: const Text(
-                                "Already have an account? Log in!",
-                                style: TextStyle(
-                                    color: Colors.black, fontSize: 10.0),
-                              )),
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 10),
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: GestureDetector(
+                                onTap: () {
+                                  controller.playAnimationForward();
+                                },
+                                child: const Text(
+                                  "Already have an account? Log in!",
+                                  style: TextStyle(
+                                      color: Colors.black, fontSize: 10.0),
+                                )),
+                          ),
                         )
                       ],
                     ),

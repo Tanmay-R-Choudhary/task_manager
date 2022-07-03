@@ -2,26 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
-import 'package:task_manager/custom_widgets/groups/group/controller/group_controller.dart';
-import 'package:task_manager/custom_widgets/groups/group/view/groups.dart';
 import 'package:task_manager/screens/home/controller/home_controller.dart';
+import 'package:task_manager/screens/home/view/dialogs.dart';
 import 'package:task_manager/screens/notifications/binding/notifications_binding.dart';
 import 'package:task_manager/screens/notifications/view/notifications.dart';
 import 'package:task_manager/utils/firebase_authentication_service.dart';
-import 'package:task_manager/utils/firebase_database_service.dart';
 
 class HomePage extends GetView<HomeController> {
   const HomePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    Get.put(GroupController(
-        userData: DatabaseServiceController.instance.getUserData));
-
-    var groupController = Get.find<GroupController>();
-
-    List<Groups> res = groupController.returnAllGroups();
-
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
@@ -35,18 +26,7 @@ class HomePage extends GetView<HomeController> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               TextButton(
-                  child: const Text("add to database"),
-                  onPressed: () {
-                    DatabaseServiceController.instance
-                        .addData("test category 1", "test title 1");
-                    DatabaseServiceController.instance
-                        .addData("test category 2", "test title 2");
-                    DatabaseServiceController.instance
-                        .addData("test category 3", "test title 3");
-
-                    DatabaseServiceController.instance.updateData();
-                    // DatabaseServiceController.instance.printData();
-                  }),
+                  child: const Text("add to database"), onPressed: () {}),
               TextButton(
                   child: const Text("logout"),
                   onPressed: () {
@@ -114,8 +94,7 @@ class HomePage extends GetView<HomeController> {
                       const Spacer(),
                       GestureDetector(
                         onTap: () {
-                          controller.notificationsAvailable.value =
-                              !controller.notificationsAvailable.value;
+                          Get.dialog(const GroupCreatorDialog());
                         },
                         child: Container(
                           height: 50.0,
@@ -136,7 +115,7 @@ class HomePage extends GetView<HomeController> {
                     const SizedBox(
                       height: 20.0,
                     ),
-                    ...res
+                    ...controller.makeGroups()
                   ]),
                 ),
               ),
