@@ -62,3 +62,6 @@ class DatabaseServiceController extends GetxController {
 
   void deleteGroup() {}
 }
+
+// UNABLE TO ADD DATA FROM DIFFERENT ACCOUNTS. CAN LOGIN IN WITH DIFFERENT ACCOUNT BUT 
+// DATA GETS WRITTEN TO THE ORIGINAL ACCOUNT.
