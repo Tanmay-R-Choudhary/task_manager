@@ -46,21 +46,21 @@ class HomePage extends GetView<HomeController> {
               child: SingleChildScrollView(
                 child: Padding(
                   padding: const EdgeInsets.only(bottom: 20.0),
-                  child: Column(children: [
-                    Row(
-                      children: [
-                        Text(
-                            "👋 Hello, ${AuthenticationServiceController.instance.auth.currentUser?.displayName ?? "err..."}!",
-                            style: const TextStyle(
-                                color: Colors.white, fontSize: 30.0)),
-                        const Spacer(),
-                        GestureDetector(
-                          onTap: () {
-                            Get.to(() => const NotificationsPage(),
-                                binding: NotificationsBinding());
-                          },
-                          child: Obx(
-                            () => Icon(
+                  child: Obx(
+                    () => Column(children: [
+                      Row(
+                        children: [
+                          Text(
+                              "👋 Hello, ${AuthenticationServiceController.instance.auth.currentUser?.displayName ?? "err..."}!",
+                              style: const TextStyle(
+                                  color: Colors.white, fontSize: 30.0)),
+                          const Spacer(),
+                          GestureDetector(
+                            onTap: () {
+                              Get.to(() => const NotificationsPage(),
+                                  binding: NotificationsBinding());
+                            },
+                            child: Icon(
                               FontAwesomeIcons.bell,
                               color: controller.notificationsAvailable.value
                                   ? Colors.pink
@@ -68,55 +68,55 @@ class HomePage extends GetView<HomeController> {
                               size: 30,
                             ),
                           ),
-                        )
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 20.0,
-                    ),
-                    Row(children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                        height: 50.0,
-                        width: 300.0,
-                        decoration: BoxDecoration(
-                          color: Colors.grey.shade300,
-                          borderRadius: BorderRadius.circular(50.0),
-                        ),
-                        child: const TextField(
-                          cursorColor: Colors.pink,
-                          decoration: InputDecoration(
-                              border: InputBorder.none,
-                              hintText: "Search groups",
-                              hintStyle: TextStyle(color: Colors.black54)),
-                        ),
+                        ],
                       ),
-                      const Spacer(),
-                      GestureDetector(
-                        onTap: () {
-                          Get.dialog(const GroupCreatorDialog());
-                        },
-                        child: Container(
+                      const SizedBox(
+                        height: 20.0,
+                      ),
+                      Row(children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 20.0),
                           height: 50.0,
-                          width: 50.0,
+                          width: 300.0,
                           decoration: BoxDecoration(
-                              color: Colors.grey.shade300,
-                              borderRadius: BorderRadius.circular(10.0)),
-                          child: const Center(
-                            child: Icon(
-                              FontAwesomeIcons.plus,
-                              color: Colors.black,
-                              size: 40.0,
-                            ),
+                            color: Colors.grey.shade300,
+                            borderRadius: BorderRadius.circular(50.0),
+                          ),
+                          child: const TextField(
+                            cursorColor: Colors.pink,
+                            decoration: InputDecoration(
+                                border: InputBorder.none,
+                                hintText: "Search groups",
+                                hintStyle: TextStyle(color: Colors.black54)),
                           ),
                         ),
-                      )
+                        const Spacer(),
+                        GestureDetector(
+                          onTap: () {
+                            Get.dialog(const GroupCreatorDialog());
+                          },
+                          child: Container(
+                            height: 50.0,
+                            width: 50.0,
+                            decoration: BoxDecoration(
+                                color: Colors.grey.shade300,
+                                borderRadius: BorderRadius.circular(10.0)),
+                            child: const Center(
+                              child: Icon(
+                                FontAwesomeIcons.plus,
+                                color: Colors.black,
+                                size: 40.0,
+                              ),
+                            ),
+                          ),
+                        )
+                      ]),
+                      const SizedBox(
+                        height: 20.0,
+                      ),
+                      ...controller.groupList,
                     ]),
-                    const SizedBox(
-                      height: 20.0,
-                    ),
-                    ...controller.makeGroups()
-                  ]),
+                  ),
                 ),
               ),
             ),

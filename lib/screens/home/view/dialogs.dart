@@ -72,7 +72,8 @@ class GroupCreatorDialog extends StatelessWidget {
 }
 
 class CardCreatorDialog extends StatelessWidget {
-  const CardCreatorDialog({Key? key}) : super(key: key);
+  final String groupID;
+  const CardCreatorDialog({Key? key, required this.groupID}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -121,6 +122,8 @@ class CardCreatorDialog extends StatelessWidget {
                             horizontal: 8.0, vertical: 10.0));
                   } else {
                     Get.back();
+                    DatabaseServiceController.instance
+                        .makeNewProject(titleController.text.trim(), groupID);
                   }
                 },
                 style: ElevatedButton.styleFrom(primary: Colors.black),
@@ -139,7 +142,8 @@ class CardCreatorDialog extends StatelessWidget {
 }
 
 class GroupDeleterDialog extends StatelessWidget {
-  const GroupDeleterDialog({Key? key}) : super(key: key);
+  final String groupID;
+  const GroupDeleterDialog({Key? key, required this.groupID}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -159,6 +163,7 @@ class GroupDeleterDialog extends StatelessWidget {
         TextButton(
           onPressed: () {
             Get.back();
+            DatabaseServiceController.instance.removeGroup(groupID);
           },
           child: const Text(
             "Do it 👍",

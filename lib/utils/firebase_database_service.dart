@@ -12,30 +12,52 @@ class DatabaseServiceController extends GetxController {
 
   late DatabaseReference userDataRef;
 
-  late DatabaseReference groupsDataRef;
-
   late DatabaseReference projectsDataRef;
 
   @override
   void onInit() {
     userDataRef = database.ref("users/${currentUser?.uid}");
-    groupsDataRef = database.ref("groups/");
     projectsDataRef = database.ref("projects/");
     super.onInit();
   }
 
   void makeNewGroup(String groupTitle) async {
-    var id = groupsDataRef.push();
+    var id = database.ref("groups/").push();
     await id.set({'title': groupTitle});
 
     await userDataRef.push().set(id.key);
   }
 
-  void makeNewProject(String projectTitle) async {
+  void makeNewProject(String projectTitle, String groupID) async {
     var id = projectsDataRef.push();
     await id.set({'title': projectTitle});
 
-    // groupsDataRef; TODO: get the group to which new project must be added
+    await database.ref("groups/$groupID/projects").push().set(id.key);
+  }
+
+  void removeGroup(String id) async {
+    // remove projects
+    await database.ref('groups/$id').child('projects').get().then((value) {
+      value.children.toList().forEach((element) async {
+        await database.ref("projects/${element.value}").remove();
+      });
+    });
+
+    // remove group
+    await database.ref('groups/$id').remove();
+
+    // remove group from user
+    String i = "";
+    await database.ref("users/${currentUser?.uid}").get().then((value) {
+      value.children.toList().forEach((element) {
+        if (element.value.toString() == id) {
+          // print(element.key);
+          i = element.key.toString();
+        }
+      });
+    });
+
+    userDataRef.child(i).remove();
   }
 
   void deleteGroup() {}

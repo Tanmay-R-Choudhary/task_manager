@@ -1,12 +1,20 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:task_manager/screens/home/view/dialogs.dart';
+import 'package:task_manager/utils/firebase_database_service.dart';
 
 class Group extends StatelessWidget {
   final String groupTitle;
   final List<String> cardTitles;
-  const Group({Key? key, required this.groupTitle, required this.cardTitles})
+  final String databaseID;
+  const Group(
+      {Key? key,
+      required this.groupTitle,
+      required this.cardTitles,
+      required this.databaseID})
       : super(key: key);
 
   @override
@@ -41,13 +49,17 @@ class Group extends StatelessWidget {
               const Spacer(),
               IconButton(
                   onPressed: () {
-                    Get.dialog(const CardCreatorDialog());
+                    Get.dialog(CardCreatorDialog(
+                      groupID: databaseID,
+                    ));
                   },
                   icon: const Icon(FontAwesomeIcons.plus,
                       color: Colors.white, size: 20.0)),
               IconButton(
                   onPressed: () {
-                    Get.dialog(const GroupDeleterDialog());
+                    Get.dialog(GroupDeleterDialog(
+                      groupID: databaseID,
+                    ));
                   },
                   icon: const Icon(FontAwesomeIcons.trash,
                       color: Colors.pink, size: 20.0)),
