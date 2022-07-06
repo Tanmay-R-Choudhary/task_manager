@@ -1,41 +1,48 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:get/get.dart';
+import 'package:task_manager/utils/firebase_authentication_service.dart';
 
 class DatabaseServiceController extends GetxController {
   static DatabaseServiceController instance = Get.find();
-  late User? currentUser;
-
-  DatabaseServiceController({required this.currentUser});
 
   FirebaseDatabase database = FirebaseDatabase.instance;
-
+  User? currentUser = AuthenticationServiceController.instance.auth.currentUser;
   late DatabaseReference userDataRef;
-
   late DatabaseReference projectsDataRef;
 
   @override
   void onInit() {
     userDataRef = database.ref("users/${currentUser?.uid}");
+    print(currentUser
+        ?.uid); // ADD A METHOD TO REREAD USER UID BEFORE GETTING TO HOME PAGE
     projectsDataRef = database.ref("projects/");
     super.onInit();
   }
 
-  void makeNewGroup(String groupTitle) async {
+  void makeNewGroup(
+      {required String groupTitle, required Function updateUI}) async {
     var id = database.ref("groups/").push();
     await id.set({'title': groupTitle});
 
     await userDataRef.push().set(id.key);
+
+    await updateUI();
   }
 
-  void makeNewProject(String projectTitle, String groupID) async {
+  void makeNewProject(
+      {required String projectTitle,
+      required String groupID,
+      required Function updateUI}) async {
     var id = projectsDataRef.push();
     await id.set({'title': projectTitle});
 
     await database.ref("groups/$groupID/projects").push().set(id.key);
+
+    await updateUI();
   }
 
-  void removeGroup(String id) async {
+  void removeGroup({required String id, required Function updateUI}) async {
     // remove projects
     await database.ref('groups/$id').child('projects').get().then((value) {
       value.children.toList().forEach((element) async {
@@ -57,11 +64,8 @@ class DatabaseServiceController extends GetxController {
       });
     });
 
-    userDataRef.child(i).remove();
+    await userDataRef.child(i).remove();
+
+    await updateUI();
   }
-
-  void deleteGroup() {}
 }
-
-// UNABLE TO ADD DATA FROM DIFFERENT ACCOUNTS. CAN LOGIN IN WITH DIFFERENT ACCOUNT BUT 
-// DATA GETS WRITTEN TO THE ORIGINAL ACCOUNT.

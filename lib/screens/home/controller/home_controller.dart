@@ -8,16 +8,26 @@ class HomeController extends GetxController {
   late List<Widget> groups;
 
   List<Object?> groupsDataFromDatabase = [];
-
-  RxList<Widget> groupList = RxList<Widget>();
+  late Rx<Column> dataCol; //  = Rx<Column>(Column(children: []))
+  bool dataRead = false;
 
   @override
-  void onReady() {
-    getAllUserData();
+  void onReady() async {
+    await updateDataColumn();
+    dataRead = true;
     super.onReady();
   }
 
-  void getAllUserData() async {
+  Future<void> updateDataColumn() async {
+    List<Group> groupList = await getAllUserData();
+    dataCol = Rx<Column>(Column(children: groupList));
+    update();
+  }
+
+  Future<List<Group>> getAllUserData() async {
+    List<Group> groupList = [];
+    groupsDataFromDatabase.clear();
+
     await DatabaseServiceController.instance.userDataRef.get().then((snapshot) {
       snapshot.children.toList().forEach((element) {
         groupsDataFromDatabase.add(element.value);
@@ -40,12 +50,12 @@ class HomeController extends GetxController {
           });
         });
 
-        if (projectList != null) {
+        if (projectList.isNotEmpty) {
           List<String> projectNames = [];
 
-          for (var project_id in projectList) {
+          for (var projectId in projectList) {
             await DatabaseServiceController.instance.database
-                .ref("projects/$project_id")
+                .ref("projects/$projectId")
                 .child("title")
                 .get()
                 .then((value) {
@@ -53,22 +63,21 @@ class HomeController extends GetxController {
             });
           }
 
-          groupList.value.add(Group(
+          groupList.add(Group(
             groupTitle: groupTitle,
             cardTitles: projectNames,
             databaseID: id.toString(),
           ));
         } else {
-          groupList.value.add(Group(
+          groupList.add(Group(
             groupTitle: groupTitle,
             cardTitles: [],
             databaseID: id.toString(),
           ));
         }
-
-        print(groupTitle);
-        print(projectList);
       });
     }
+
+    return groupList;
   }
 }

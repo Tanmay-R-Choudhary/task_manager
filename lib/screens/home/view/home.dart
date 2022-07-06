@@ -26,8 +26,6 @@ class HomePage extends GetView<HomeController> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               TextButton(
-                  child: const Text("add to database"), onPressed: () {}),
-              TextButton(
                   child: const Text("logout"),
                   onPressed: () {
                     AuthenticationServiceController.instance.signOut();
@@ -45,9 +43,8 @@ class HomePage extends GetView<HomeController> {
                       ColorScheme.fromSwatch(accentColor: Colors.white)),
               child: SingleChildScrollView(
                 child: Padding(
-                  padding: const EdgeInsets.only(bottom: 20.0),
-                  child: Obx(
-                    () => Column(children: [
+                    padding: const EdgeInsets.only(bottom: 20.0),
+                    child: Column(children: [
                       Row(
                         children: [
                           Text(
@@ -114,10 +111,18 @@ class HomePage extends GetView<HomeController> {
                       const SizedBox(
                         height: 20.0,
                       ),
-                      ...controller.groupList,
-                    ]),
-                  ),
-                ),
+                      GetBuilder<HomeController>(
+                        builder: (_) {
+                          if (!(_.dataRead)) {
+                            return Column(
+                              children: const [],
+                            );
+                          } else {
+                            return _.dataCol.value;
+                          }
+                        },
+                      )
+                    ])),
               ),
             ),
           ),

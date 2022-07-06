@@ -84,7 +84,7 @@ class StartPage extends GetView<StartPageController> {
                                   width: 20,
                                 ),
                                 Text(
-                                  "Get started",
+                                  "Create account",
                                   style: TextStyle(color: Colors.white),
                                 ),
                                 Spacer(),

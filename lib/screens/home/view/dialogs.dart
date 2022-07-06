@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:task_manager/screens/home/controller/home_controller.dart';
 import 'package:task_manager/utils/firebase_database_service.dart';
 
 class GroupCreatorDialog extends StatelessWidget {
@@ -8,6 +9,7 @@ class GroupCreatorDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var nameController = TextEditingController();
+    final homeController = Get.put(HomeController());
 
     return Dialog(
       backgroundColor: Colors.white,
@@ -52,8 +54,9 @@ class GroupCreatorDialog extends StatelessWidget {
                             horizontal: 8.0, vertical: 10.0));
                   } else {
                     Get.back();
-                    DatabaseServiceController.instance
-                        .makeNewGroup(nameController.text.trim());
+                    DatabaseServiceController.instance.makeNewGroup(
+                        groupTitle: nameController.text.trim(),
+                        updateUI: homeController.updateDataColumn);
                   }
                 },
                 style: ElevatedButton.styleFrom(primary: Colors.black),
@@ -78,6 +81,7 @@ class CardCreatorDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var titleController = TextEditingController();
+    final homeController = Get.put(HomeController());
 
     return Dialog(
       backgroundColor: Colors.white,
@@ -122,8 +126,11 @@ class CardCreatorDialog extends StatelessWidget {
                             horizontal: 8.0, vertical: 10.0));
                   } else {
                     Get.back();
-                    DatabaseServiceController.instance
-                        .makeNewProject(titleController.text.trim(), groupID);
+                    DatabaseServiceController.instance.makeNewProject(
+                        projectTitle: titleController.text.trim(),
+                        groupID: groupID,
+                        updateUI: homeController.updateDataColumn);
+                    homeController.updateDataColumn();
                   }
                 },
                 style: ElevatedButton.styleFrom(primary: Colors.black),
@@ -147,6 +154,8 @@ class GroupDeleterDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final homeController = Get.put(HomeController());
+
     return AlertDialog(
       backgroundColor: Colors.white,
       shape: const RoundedRectangleBorder(
@@ -163,7 +172,9 @@ class GroupDeleterDialog extends StatelessWidget {
         TextButton(
           onPressed: () {
             Get.back();
-            DatabaseServiceController.instance.removeGroup(groupID);
+            DatabaseServiceController.instance.removeGroup(
+                id: groupID, updateUI: homeController.updateDataColumn);
+            homeController.updateDataColumn();
           },
           child: const Text(
             "Do it 👍",
