@@ -19,19 +19,80 @@ class HomePage extends GetView<HomeController> {
       ),
       child: Scaffold(
         backgroundColor: Colors.black,
-        drawer: Drawer(
+        endDrawer: Drawer(
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(50.0),
+                  bottomLeft: Radius.circular(50.0))),
           backgroundColor: Colors.blueGrey,
-          child: Center(
-              child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              TextButton(
-                  child: const Text("logout"),
-                  onPressed: () {
-                    AuthenticationServiceController.instance.signOut();
-                  }),
-            ],
-          )),
+          child: Padding(
+            padding:
+                const EdgeInsets.symmetric(vertical: 100.0, horizontal: 30.0),
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      AuthenticationServiceController.instance.signOut();
+                    },
+                    child: Row(children: const [
+                      Text(
+                        "Logout",
+                        style: TextStyle(
+                            fontSize: 20.0,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      Spacer(),
+                      Icon(FontAwesomeIcons.arrowRightFromBracket,
+                          color: Colors.white)
+                    ]),
+                  ),
+                  GestureDetector(
+                    onTap: () {},
+                    child: Row(children: const [
+                      Text(
+                        "Notifications",
+                        style: TextStyle(
+                            fontSize: 20.0,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      Spacer(),
+                      Icon(FontAwesomeIcons.bell, color: Colors.white)
+                    ]),
+                  ),
+                  GestureDetector(
+                    onTap: () {},
+                    child: Row(children: const [
+                      Text(
+                        "Update profile",
+                        style: TextStyle(
+                            fontSize: 20.0,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      Spacer(),
+                      Icon(FontAwesomeIcons.user, color: Colors.white)
+                    ]),
+                  ),
+                  GestureDetector(
+                    onTap: () {},
+                    child: Row(children: const [
+                      Text(
+                        "Your statistics",
+                        style: TextStyle(
+                            fontSize: 20.0,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      Spacer(),
+                      Icon(FontAwesomeIcons.chartLine, color: Colors.white)
+                    ]),
+                  ),
+                ]),
+          ),
         ),
         body: SafeArea(
           child: Padding(
@@ -47,10 +108,13 @@ class HomePage extends GetView<HomeController> {
                     child: Column(children: [
                       Row(
                         children: [
-                          Text(
-                              "👋 Hello, ${AuthenticationServiceController.instance.auth.currentUser?.displayName ?? "err..."}!",
-                              style: const TextStyle(
-                                  color: Colors.white, fontSize: 30.0)),
+                          SizedBox(
+                            width: 300,
+                            child: Text(
+                                "👋 Hello, ${AuthenticationServiceController.instance.auth.currentUser?.displayName ?? "err..."}!",
+                                style: const TextStyle(
+                                    color: Colors.white, fontSize: 30.0)),
+                          ),
                           const Spacer(),
                           GestureDetector(
                             onTap: () {

@@ -14,8 +14,7 @@ class DatabaseServiceController extends GetxController {
   @override
   void onInit() {
     userDataRef = database.ref("users/${currentUser?.uid}");
-    print(currentUser
-        ?.uid); // ADD A METHOD TO REREAD USER UID BEFORE GETTING TO HOME PAGE
+    print(currentUser?.uid);
     projectsDataRef = database.ref("projects/");
     super.onInit();
   }
@@ -65,6 +64,27 @@ class DatabaseServiceController extends GetxController {
     });
 
     await userDataRef.child(i).remove();
+
+    await updateUI();
+  }
+
+  void removeProject(
+      {required String projectID,
+      required String groupID,
+      required Function updateUI}) async {
+    String temp = "";
+
+    await database.ref('groups/$groupID/projects').get().then((value) {
+      value.children.toList().forEach((element) {
+        if (element.value.toString() == projectID) {
+          temp = element.key.toString();
+        }
+      });
+    });
+
+    await database.ref('groups/$groupID/projects/$temp').remove();
+
+    await projectsDataRef.child(projectID).remove();
 
     await updateUI();
   }

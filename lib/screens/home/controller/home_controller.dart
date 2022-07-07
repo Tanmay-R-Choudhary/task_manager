@@ -40,7 +40,9 @@ class HomeController extends GetxController {
           .get()
           .then((snapshot) async {
         String groupTitle = snapshot.child("title").value.toString();
+
         List<String>? projectList = [];
+
         await DatabaseServiceController.instance.database
             .ref('groups/$id/projects')
             .get()
@@ -67,12 +69,14 @@ class HomeController extends GetxController {
             groupTitle: groupTitle,
             cardTitles: projectNames,
             databaseID: id.toString(),
+            cardID: projectList,
           ));
         } else {
           groupList.add(Group(
             groupTitle: groupTitle,
-            cardTitles: [],
+            cardTitles: const [],
             databaseID: id.toString(),
+            cardID: projectList,
           ));
         }
       });

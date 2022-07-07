@@ -198,3 +198,60 @@ class GroupDeleterDialog extends StatelessWidget {
     );
   }
 }
+
+class CardDeleterDialog extends StatelessWidget {
+  final String groupID;
+  final String projectID;
+  const CardDeleterDialog(
+      {Key? key, required this.projectID, required this.groupID})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final homeController = Get.put(HomeController());
+
+    return AlertDialog(
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(20.0))),
+      elevation: 20.0,
+      title: const Text(
+        "Are you sure you want to delete this project?",
+        style: TextStyle(
+          fontSize: 25.0,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () {
+            Get.back();
+            DatabaseServiceController.instance.removeProject(
+                projectID: projectID,
+                groupID: groupID,
+                updateUI: homeController.updateDataColumn);
+          },
+          child: const Text(
+            "Do it 👍",
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.pink,
+                fontSize: 15.0),
+          ),
+        ),
+        TextButton(
+          onPressed: () {
+            Get.back();
+          },
+          child: const Text(
+            "No, take me back! 😬",
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+                fontSize: 15.0),
+          ),
+        ),
+      ],
+    );
+  }
+}

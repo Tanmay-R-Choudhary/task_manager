@@ -7,11 +7,13 @@ class Group extends StatelessWidget {
   final String groupTitle;
   final List<String> cardTitles;
   final String databaseID;
+  final List<String> cardID;
   const Group(
       {Key? key,
       required this.groupTitle,
       required this.cardTitles,
-      required this.databaseID})
+      required this.databaseID,
+      required this.cardID})
       : super(key: key);
 
   @override
@@ -19,8 +21,12 @@ class Group extends StatelessWidget {
     List<GroupCard> makeChildren() {
       List<GroupCard> cards = [];
 
-      for (var s in cardTitles) {
-        cards.add(GroupCard(cardTitle: s));
+      for (int i = 0; i < cardTitles.length; i++) {
+        cards.add(GroupCard(
+          cardTitle: cardTitles[i],
+          ID: cardID[i],
+          groupID: databaseID,
+        ));
       }
 
       return cards;
@@ -60,10 +66,6 @@ class Group extends StatelessWidget {
                   },
                   icon: const Icon(FontAwesomeIcons.trash,
                       color: Colors.pink, size: 20.0)),
-              IconButton(
-                  onPressed: () {},
-                  icon: const Icon(FontAwesomeIcons.ellipsisVertical,
-                      color: Colors.white, size: 20.0))
             ],
           ),
         ),
@@ -85,20 +87,35 @@ class Group extends StatelessWidget {
 
 class GroupCard extends StatelessWidget {
   final String cardTitle;
-  const GroupCard({Key? key, required this.cardTitle}) : super(key: key);
+  final String ID;
+  final String groupID;
+  const GroupCard(
+      {Key? key,
+      required this.cardTitle,
+      required this.ID,
+      required this.groupID})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(right: 10.0),
-      height: 150,
-      width: 150,
-      decoration: BoxDecoration(
-          color: Colors.blueGrey, borderRadius: BorderRadius.circular(20.0)),
-      child: Center(
-        child: Text(
-          cardTitle,
-          style: const TextStyle(fontSize: 15.0, fontWeight: FontWeight.bold),
+    return GestureDetector(
+      onLongPress: () {
+        Get.dialog(CardDeleterDialog(
+          projectID: ID,
+          groupID: groupID,
+        ));
+      },
+      child: Container(
+        margin: const EdgeInsets.only(right: 10.0),
+        height: 150,
+        width: 150,
+        decoration: BoxDecoration(
+            color: Colors.blueGrey, borderRadius: BorderRadius.circular(20.0)),
+        child: Center(
+          child: Text(
+            cardTitle,
+            style: const TextStyle(fontSize: 15.0, fontWeight: FontWeight.bold),
+          ),
         ),
       ),
     );
