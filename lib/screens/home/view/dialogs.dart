@@ -130,7 +130,6 @@ class CardCreatorDialog extends StatelessWidget {
                         projectTitle: titleController.text.trim(),
                         groupID: groupID,
                         updateUI: homeController.updateDataColumn);
-                    homeController.updateDataColumn();
                   }
                 },
                 style: ElevatedButton.styleFrom(primary: Colors.black),
@@ -174,7 +173,6 @@ class GroupDeleterDialog extends StatelessWidget {
             Get.back();
             DatabaseServiceController.instance.removeGroup(
                 id: groupID, updateUI: homeController.updateDataColumn);
-            homeController.updateDataColumn();
           },
           child: const Text(
             "Do it 👍",
