@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:task_manager/screens/home/view/dialogs.dart';
+import 'package:task_manager/screens/tasks/binding/tasks_binding.dart';
+import 'package:task_manager/screens/tasks/view/tasks.dart';
 
 class Group extends StatelessWidget {
   final String groupTitle;
@@ -24,7 +26,7 @@ class Group extends StatelessWidget {
       for (int i = 0; i < cardTitles.length; i++) {
         cards.add(GroupCard(
           cardTitle: cardTitles[i],
-          ID: cardID[i],
+          id: cardID[i],
           groupID: databaseID,
         ));
       }
@@ -87,12 +89,12 @@ class Group extends StatelessWidget {
 
 class GroupCard extends StatelessWidget {
   final String cardTitle;
-  final String ID;
+  final String id;
   final String groupID;
   const GroupCard(
       {Key? key,
       required this.cardTitle,
-      required this.ID,
+      required this.id,
       required this.groupID})
       : super(key: key);
 
@@ -101,9 +103,13 @@ class GroupCard extends StatelessWidget {
     return GestureDetector(
       onLongPress: () {
         Get.dialog(CardDeleterDialog(
-          projectID: ID,
+          projectID: id,
           groupID: groupID,
         ));
+      },
+      onTap: () {
+        Get.off(() => const TasksPage(),
+            binding: TasksPageBinding(projectID: id));
       },
       child: Container(
         margin: const EdgeInsets.only(right: 10.0),
