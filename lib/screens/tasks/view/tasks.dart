@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:task_manager/screens/home/binding/home_binding.dart';
 import 'package:task_manager/screens/home/view/home.dart';
 import 'package:task_manager/screens/tasks/controller/tasks_controller.dart';
+import 'package:task_manager/screens/tasks/view/dialog.dart';
 
 class TasksPage extends GetView<TasksPageController> {
   const TasksPage({Key? key}) : super(key: key);
@@ -24,47 +25,45 @@ class TasksPage extends GetView<TasksPageController> {
                   colorScheme: ColorScheme.fromSwatch(
                 accentColor: Colors.white,
               )),
-              child: SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: IconButton(
-                            onPressed: () {
-                              Get.off(() => const HomePage(),
-                                  binding: HomeBinding());
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 20.0, vertical: 50.0),
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Obx(
+                        () => SizedBox(
+                          width: 250,
+                          child: Text(
+                            controller.projectName.value,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 30.0,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 30.0,
+                      ),
+                      Container(
+                        decoration: BoxDecoration(
+                            border: Border.all(),
+                            borderRadius: BorderRadius.circular(20.0)),
+                        height: Get.mediaQuery.size.height / 1.5,
+                        child: GetBuilder<TasksPageController>(
+                          builder: (controller) => ListView.builder(
+                            padding: const EdgeInsets.only(
+                                bottom: 100.0, right: 20.0),
+                            itemCount: controller.taskCardsList.value.length,
+                            itemBuilder: (context, idx) {
+                              return controller.taskCardsList.value[idx];
                             },
-                            icon: const Icon(
-                              FontAwesomeIcons.angleLeft,
-                              color: Colors.white,
-                            ),
                           ),
                         ),
-                        const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 20.0),
-                          child: CircleAvatar(
-                            backgroundColor: Colors.grey,
-                            radius: 30.0,
-                          ),
-                        ),
-                        Obx(
-                          () => SizedBox(
-                            width: 250,
-                            child: Text(
-                              controller.projectName.value,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 30.0,
-                                color: Colors.black,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ]),
-                ),
+                      )
+                    ]),
               ),
             ),
             Align(
@@ -80,7 +79,7 @@ class TasksPage extends GetView<TasksPageController> {
                   ),
                 ),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     IconButton(
                       onPressed: () {},
@@ -88,19 +87,15 @@ class TasksPage extends GetView<TasksPageController> {
                       color: Colors.white,
                       iconSize: 30.0,
                     ),
-                    IconButton(
-                      onPressed: () {},
-                      icon: const Icon(FontAwesomeIcons.envelopesBulk),
-                      color: Colors.white,
-                      iconSize: 30.0,
-                    ),
                     Padding(
                       padding: const EdgeInsets.only(bottom: 20.0),
                       child: GestureDetector(
-                        onTap: () {},
+                        onTap: () {
+                          Get.dialog(const TaskCreatorDialog());
+                        },
                         child: Container(
-                          height: 60.0,
-                          width: 60.0,
+                          height: 80.0,
+                          width: 80.0,
                           decoration: const BoxDecoration(
                             shape: BoxShape.circle,
                             color: Colors.white,
@@ -108,20 +103,16 @@ class TasksPage extends GetView<TasksPageController> {
                           child: const Icon(
                             FontAwesomeIcons.plus,
                             color: Colors.black,
-                            size: 40.0,
+                            size: 50.0,
                           ),
                         ),
                       ),
                     ),
                     IconButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Get.off(() => const HomePage(), binding: HomeBinding());
+                      },
                       icon: const Icon(FontAwesomeIcons.house),
-                      color: Colors.white,
-                      iconSize: 30.0,
-                    ),
-                    IconButton(
-                      onPressed: () {},
-                      icon: const Icon(FontAwesomeIcons.solidBell),
                       color: Colors.white,
                       iconSize: 30.0,
                     ),
@@ -130,6 +121,61 @@ class TasksPage extends GetView<TasksPageController> {
               ),
             )
           ]),
+        ),
+      ),
+    );
+  }
+}
+
+class TaskCard extends StatelessWidget {
+  final String title;
+  final String priority;
+  const TaskCard({Key? key, required this.title, required this.priority})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.centerRight,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 20.0),
+        child: Container(
+          height: 100,
+          width: 200,
+          decoration: BoxDecoration(
+            boxShadow: const [
+              BoxShadow(
+                color: Colors.black,
+                offset: Offset(0, 5),
+                blurRadius: 10.0,
+              )
+            ],
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20.0),
+          ),
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20.0,
+                  ),
+                ),
+                Text(
+                  priority,
+                  style: TextStyle(
+                    color: Colors.grey.shade600,
+                    fontSize: 15.0,
+                  ),
+                )
+              ],
+            ),
+          ),
         ),
       ),
     );
