@@ -27,6 +27,8 @@ class StartPageController extends GetxController
         update();
       });
 
+    _animController.value = 0.0;
+
     super.onInit();
   }
 

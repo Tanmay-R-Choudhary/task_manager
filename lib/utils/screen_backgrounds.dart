@@ -59,18 +59,18 @@ class GetStartedPagePainter extends CustomPainter {
       ..style = PaintingStyle.fill;
 
     Path painterPath2 = Path();
-    painterPath2.moveTo(
-        0, size.height * (1.0 - 0.1 * (1 - paintSplashIndicator.value))); // 0.9
+    painterPath2.moveTo(0,
+        size.height * (1.0 - 0.05 * (1 - paintSplashIndicator.value))); // 0.9
     painterPath2.lineTo(0, size.height);
     painterPath2.lineTo(size.width, size.height);
     painterPath2.lineTo(size.width,
-        size.height * (1.0 - 0.2 * (1 - paintSplashIndicator.value))); // 0.8
+        size.height * (1.0 - 0.15 * (1 - paintSplashIndicator.value))); // 0.8
     painterPath2.quadraticBezierTo(
         size.width * 0.6 * (1 - paintSplashIndicator.value),
-        size.height * (1.0 - 0.3 * (1 - paintSplashIndicator.value)),
+        size.height * (1.0 - 0.2 * (1 - paintSplashIndicator.value)),
         0,
         size.height *
-            (1.0 - 0.1 * (1 - paintSplashIndicator.value))); // 0.6, 0.6, 0.9
+            (1.0 - 0.05 * (1 - paintSplashIndicator.value))); // 0.6, 0.6, 0.9
     painterPath2.close();
 
     canvas.drawPath(painterPath2, painter2);
@@ -113,15 +113,15 @@ class CreateAccountPageClipPath extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
     Path path = Path();
-    path.moveTo(0, size.height * 0.9 * paintSplashIndicator.value);
+    path.moveTo(0, size.height * 0.95 * paintSplashIndicator.value);
     path.lineTo(0, size.height);
     path.lineTo(size.width, size.height);
-    path.lineTo(size.width, size.height * 0.8 * paintSplashIndicator.value);
+    path.lineTo(size.width, size.height * 0.85 * paintSplashIndicator.value);
     path.quadraticBezierTo(
         size.width * 0.6 * paintSplashIndicator.value,
-        size.height * 0.7 * paintSplashIndicator.value,
+        size.height * 0.8 * paintSplashIndicator.value,
         0,
-        size.height * 0.9 * paintSplashIndicator.value);
+        size.height * 0.95 * paintSplashIndicator.value);
     path.close();
 
     return path;

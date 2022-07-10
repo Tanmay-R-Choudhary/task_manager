@@ -8,6 +8,7 @@ class TaskCreatorDialog extends GetView<TasksPageController> {
   @override
   Widget build(BuildContext context) {
     var titleController = TextEditingController();
+    var descriptionController = TextEditingController();
 
     return Dialog(
       backgroundColor: Colors.white,
@@ -38,6 +39,21 @@ class TaskCreatorDialog extends GetView<TasksPageController> {
                     hintText: "Task title?",
                     hintStyle:
                         TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0)),
+              ),
+              const SizedBox(
+                height: 20.0,
+              ),
+              TextField(
+                controller: descriptionController,
+                cursorColor: Colors.black,
+                decoration: const InputDecoration(
+                    focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black)),
+                    enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black)),
+                    hintText: "Task description (optional)?",
+                    hintStyle:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 15.0)),
               ),
               const SizedBox(
                 height: 20.0,
@@ -74,7 +90,8 @@ class TaskCreatorDialog extends GetView<TasksPageController> {
                             horizontal: 8.0, vertical: 10.0));
                   } else {
                     Get.back();
-                    controller.addTask(titleController.text.trim());
+                    controller.addTask(titleController.text.trim(),
+                        descriptionController.text.trim());
                   }
                 },
                 style: ElevatedButton.styleFrom(primary: Colors.black),
