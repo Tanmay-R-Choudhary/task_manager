@@ -78,14 +78,16 @@ class CreateAccountPage extends GetView<CreateAccountPageController> {
                         ),
                         Row(children: [
                           Expanded(
-                              child: TextField(
-                            controller: passwordController,
-                            cursorColor: Colors.black,
-                            decoration: const InputDecoration(
-                              border: InputBorder.none,
-                              hintText: "Password",
+                            child: TextField(
+                              obscureText: true,
+                              controller: passwordController,
+                              cursorColor: Colors.black,
+                              decoration: const InputDecoration(
+                                border: InputBorder.none,
+                                hintText: "Password",
+                              ),
                             ),
-                          )),
+                          ),
                           const SizedBox(
                             width: 20.0,
                           ),

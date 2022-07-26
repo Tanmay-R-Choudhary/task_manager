@@ -7,15 +7,13 @@ import 'package:task_manager/screens/tasks/view/tasks.dart';
 
 class Group extends StatelessWidget {
   final String groupTitle;
-  final List<String> cardTitles;
   final String databaseID;
-  final List<String> cardID;
+  final Map<dynamic, dynamic> cardData;
   const Group(
       {Key? key,
       required this.groupTitle,
-      required this.cardTitles,
       required this.databaseID,
-      required this.cardID})
+      required this.cardData})
       : super(key: key);
 
   @override
@@ -23,12 +21,11 @@ class Group extends StatelessWidget {
     List<GroupCard> makeChildren() {
       List<GroupCard> cards = [];
 
-      for (int i = 0; i < cardTitles.length; i++) {
+      for (var e in cardData.entries) {
         cards.add(GroupCard(
-          cardTitle: cardTitles[i],
-          id: cardID[i],
-          groupID: databaseID,
-        ));
+            cardTitle: e.value.toString(),
+            id: e.key.toString(),
+            groupID: databaseID));
       }
 
       return cards;

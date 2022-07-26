@@ -54,9 +54,7 @@ class GroupCreatorDialog extends StatelessWidget {
                             horizontal: 8.0, vertical: 10.0));
                   } else {
                     Get.back();
-                    DatabaseServiceController.instance.makeNewGroup(
-                        groupTitle: nameController.text.trim(),
-                        updateUI: homeController.updateDataColumn);
+                    homeController.addGroup(nameController.text.trim());
                   }
                 },
                 style: ElevatedButton.styleFrom(primary: Colors.black),
@@ -126,10 +124,8 @@ class CardCreatorDialog extends StatelessWidget {
                             horizontal: 8.0, vertical: 10.0));
                   } else {
                     Get.back();
-                    DatabaseServiceController.instance.makeNewProject(
-                        projectTitle: titleController.text.trim(),
-                        groupID: groupID,
-                        updateUI: homeController.updateDataColumn);
+                    homeController.addProject(
+                        groupID, titleController.text.trim());
                   }
                 },
                 style: ElevatedButton.styleFrom(primary: Colors.black),

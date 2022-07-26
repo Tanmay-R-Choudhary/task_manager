@@ -19,33 +19,33 @@ class DatabaseServiceController extends GetxController {
     super.onInit();
   }
 
-  void makeNewGroup(
-      {required String groupTitle, required Function updateUI}) async {
+  Future<String> makeNewGroup({required String groupTitle}) async {
     var id = database.ref("groups/").push();
     await id.set({'title': groupTitle});
 
     await userDataRef.push().set(id.key);
 
-    await updateUI();
+    return id.key.toString();
   }
 
-  void makeNewProject(
-      {required String projectTitle,
-      required String groupID,
-      required Function updateUI}) async {
+  Future<String> makeNewProject(
+      {required String projectTitle, required String groupID}) async {
     var id = projectsDataRef.push();
     await id.set({'title': projectTitle});
 
-    await database.ref("groups/$groupID/projects").push().set(id.key);
+    await database
+        .ref("groups/$groupID/projects")
+        .push()
+        .set({'id': id.key, "title": projectTitle});
 
-    await updateUI();
+    return id.key.toString();
   }
 
   void removeGroup({required String id, required Function updateUI}) async {
     // remove projects
     await database.ref('groups/$id').child('projects').get().then((value) {
       value.children.toList().forEach((element) async {
-        await database.ref("projects/${element.value}").remove();
+        await database.ref("projects/${element.child('id').value}").remove();
       });
     });
 
@@ -76,7 +76,7 @@ class DatabaseServiceController extends GetxController {
 
     await database.ref('groups/$groupID/projects').get().then((value) {
       value.children.toList().forEach((element) {
-        if (element.value.toString() == projectID) {
+        if (element.child('id').value.toString() == projectID) {
           temp = element.key.toString();
         }
       });

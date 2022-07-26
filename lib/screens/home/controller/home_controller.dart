@@ -5,83 +5,96 @@ import 'package:task_manager/utils/firebase_database_service.dart';
 
 class HomeController extends GetxController {
   var notificationsAvailable = false.obs;
-  late List<Widget> groups;
 
-  List<Object?> groupsDataFromDatabase = [];
+  Map<Map<String, String>, Map<dynamic, dynamic>> homePageData = {};
+  // {groupID: groupTitle} : {projectID: projectTitle, projectID: projectTitle...}
+
+  List<Group> groupList = [];
+
   late Rx<Column> dataCol; //  = Rx<Column>(Column(children: []))
   bool dataRead = false;
 
+  bool firstReadCompleted = false;
+
   @override
   void onReady() async {
-    await updateDataColumn();
+    await getHomePageData();
+    for (var e in homePageData.entries) {
+      print(e);
+    }
+    updateDataColumn();
     dataRead = true;
     super.onReady();
   }
 
-  Future<void> updateDataColumn() async {
-    List<Group> groupList = await getAllUserData();
+  void updateDataColumn() {
     dataCol = Rx<Column>(Column(children: groupList));
     update();
   }
 
-  Future<List<Group>> getAllUserData() async {
-    List<Group> groupList = [];
-    groupsDataFromDatabase.clear();
+  Future<void> addGroup(String groupTitle) async {
+    String groupID = await DatabaseServiceController.instance
+        .makeNewGroup(groupTitle: groupTitle);
+    var entry = {
+      {groupID: groupTitle}: {}
+    };
+    homePageData.addEntries(entry.entries);
+    groupList.add(Group(groupTitle: groupTitle, databaseID: groupID, cardData: const {}));
 
-    await DatabaseServiceController.instance.userDataRef.get().then((snapshot) {
-      snapshot.children.toList().forEach((element) {
-        groupsDataFromDatabase.add(element.value);
-      });
-    });
+    updateDataColumn();
+  }
 
-    for (var id in groupsDataFromDatabase) {
-      await DatabaseServiceController.instance.database
-          .ref("groups/$id")
-          .get()
-          .then((snapshot) async {
-        String groupTitle = snapshot.child("title").value.toString();
+  Future<void> addProject(String groupID, String projectName) async {
+    String projectID = await DatabaseServiceController.instance.makeNewProject(projectTitle: projectName, groupID: groupID);
 
-        List<String>? projectList = [];
+    Map<String, String> ele = homePageData.keys.firstWhere(
+      (element) => element.keys.first == groupID,
+    );
+    var project = <String, String>{projectID: projectName};
 
-        await DatabaseServiceController.instance.database
-            .ref('groups/$id/projects')
-            .get()
-            .then((value) {
-          value.children.toList().forEach((element) {
-            projectList.add(element.value.toString());
-          });
-        });
+    homePageData[ele]?.addEntries(project.entries);
 
-        if (projectList.isNotEmpty) {
-          List<String> projectNames = [];
+    int idx = homePageData.keys.toList().indexWhere((element) => element.keys.first == groupID);
 
-          for (var projectId in projectList) {
-            await DatabaseServiceController.instance.database
-                .ref("projects/$projectId")
-                .child("title")
-                .get()
-                .then((value) {
-              projectNames.add(value.value.toString());
-            });
-          }
+    groupList[idx] = Group(
+        groupTitle: ele.values.first,
+        databaseID: groupID,
+        cardData: homePageData[ele] ?? {});
 
-          groupList.add(Group(
-            groupTitle: groupTitle,
-            cardTitles: projectNames,
-            databaseID: id.toString(),
-            cardID: projectList,
-          ));
-        } else {
-          groupList.add(Group(
-            groupTitle: groupTitle,
-            cardTitles: const [],
-            databaseID: id.toString(),
-            cardID: projectList,
-          ));
-        }
-      });
-    }
+    updateDataColumn();
+  }
 
-    return groupList;
+  Future<void> getHomePageData() async {
+    homePageData.clear();
+    groupList.clear();
+
+    await DatabaseServiceController.instance.userDataRef.get().then(
+      (snapshot) {
+        snapshot.children.toList().forEach(
+          (element) async {
+            String groupID = element.value.toString();
+            await DatabaseServiceController.instance.database.ref("groups/$groupID").get().then(
+              (groupSnapshot) {
+                String groupTitle = groupSnapshot.child("title").value.toString();
+                
+                Map<String, String> projects = {};
+
+                var projectsDatasnapshot = groupSnapshot.child('projects').children.toList();
+
+                for (var projectElement in projectsDatasnapshot) {
+                  Map<String, String> temp = {projectElement.child('id').value.toString() : projectElement.child('title').value.toString()};
+                  projects.addAll(temp);
+                  // print("inside loop: $projects for group with name $groupTitle");
+                }
+
+                // print("outside loop: $projects for group with name $groupTitle");
+                Map<Map<String, String>, Map<String, String>> data = {<String, String>{groupID: groupTitle}: projects};
+                homePageData.addAll(data);
+              },
+            );
+          },
+        );
+      },
+    );
   }
 }
