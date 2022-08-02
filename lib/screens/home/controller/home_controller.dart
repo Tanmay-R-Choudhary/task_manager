@@ -6,95 +6,136 @@ import 'package:task_manager/utils/firebase_database_service.dart';
 class HomeController extends GetxController {
   var notificationsAvailable = false.obs;
 
-  Map<Map<String, String>, Map<dynamic, dynamic>> homePageData = {};
-  // {groupID: groupTitle} : {projectID: projectTitle, projectID: projectTitle...}
+  final Map<String, String> groupData = {};
+  final Map<String, Map<String, String>> projectsData = {};
 
-  List<Group> groupList = [];
+  final Map<String, Group> groupList = {};
 
   late Rx<Column> dataCol; //  = Rx<Column>(Column(children: []))
   bool dataRead = false;
 
-  bool firstReadCompleted = false;
-
   @override
   void onReady() async {
     await getHomePageData();
-    for (var e in homePageData.entries) {
-      print(e);
-    }
-    updateDataColumn();
+    updateDisplay();
     dataRead = true;
     super.onReady();
-  }
-
-  void updateDataColumn() {
-    dataCol = Rx<Column>(Column(children: groupList));
     update();
   }
 
-  Future<void> addGroup(String groupTitle) async {
-    String groupID = await DatabaseServiceController.instance
-        .makeNewGroup(groupTitle: groupTitle);
-    var entry = {
-      {groupID: groupTitle}: {}
-    };
-    homePageData.addEntries(entry.entries);
-    groupList.add(Group(groupTitle: groupTitle, databaseID: groupID, cardData: const {}));
-
-    updateDataColumn();
+  void updateDisplay() {
+    dataCol = Rx<Column>(Column(children: groupList.values.toList()));
   }
 
-  Future<void> addProject(String groupID, String projectName) async {
-    String projectID = await DatabaseServiceController.instance.makeNewProject(projectTitle: projectName, groupID: groupID);
+  void removeProject(String groupID, String projectID) async {
+    String id = "";
 
-    Map<String, String> ele = homePageData.keys.firstWhere(
-      (element) => element.keys.first == groupID,
-    );
-    var project = <String, String>{projectID: projectName};
+    await DatabaseServiceController.instance.database.ref("groups/$groupID/projects").get().then((value) {
+      value.children.toList().forEach((element) {
+        if (element.child("id").value == projectID) {
+          id = element.key.toString();
+        }
+      });
+    });
 
-    homePageData[ele]?.addEntries(project.entries);
+    await DatabaseServiceController.instance.database.ref("groups/$groupID/projects/$id").remove();
+    await DatabaseServiceController.instance.database.ref("projects/$projectID").remove();
 
-    int idx = homePageData.keys.toList().indexWhere((element) => element.keys.first == groupID);
+    projectsData[groupID]?.remove(projectID);
+    groupList[groupID] = Group(groupTitle: groupData[groupID] ?? "", databaseID: groupID, cardData: projectsData[groupID] ?? {});
 
-    groupList[idx] = Group(
-        groupTitle: ele.values.first,
-        databaseID: groupID,
-        cardData: homePageData[ele] ?? {});
+    updateDisplay();
+    update();
+  }
 
-    updateDataColumn();
+  void removeGroup(String groupID) async {
+    await DatabaseServiceController.instance.database.ref("groups/$groupID/projects").get().then((snapshot) {
+      snapshot.children.toList().forEach((element) {
+        DatabaseServiceController.instance.database.ref("projects/${element.child('id').value.toString()}").remove();
+      });
+    });
+
+    await DatabaseServiceController.instance.database.ref("groups/$groupID").remove();
+    String key = "";
+    await DatabaseServiceController.instance.userDataRef.get().then((value) {
+      value.children.toList().forEach((element) {
+        if (element.value == groupID) {
+          key = element.key.toString();
+        }
+      });
+    });
+
+    print("the key is");
+    print(key);
+
+    await DatabaseServiceController.instance.userDataRef.child(key).remove();
+
+    groupData.remove(groupID);
+    projectsData.remove(groupID);
+    groupList.remove(groupID);
+
+    updateDisplay();
+    update();
+  }
+
+  void addGroup(String title) async {
+    var groupID = DatabaseServiceController.instance.database.ref("groups").push();
+    await groupID.set({
+      'title': title
+    });
+
+    await DatabaseServiceController.instance.userDataRef.push().set(groupID.key);
+
+    groupData[groupID.key.toString()] = title;
+    groupList[groupID.key.toString()] = Group(groupTitle: title, databaseID: groupID.key.toString(), cardData: {},);
+
+    updateDisplay();
+    update();
+  }
+
+  void addProject(String projectTitle, String groupID) async {
+    var projectID = DatabaseServiceController.instance.database.ref("projects").push();
+    await DatabaseServiceController.instance.database.ref("groups/$groupID/projects").push().set({
+      'id': projectID.key.toString(), 'title': projectTitle
+    });
+
+    await projectID.set({
+      'title': projectTitle
+    });
+
+    projectsData[groupID]?[projectID.key.toString()] = projectTitle;
+    groupList[groupID] = Group(groupTitle: groupData[groupID] ?? "", databaseID: groupID, cardData: projectsData[groupID] ?? {});
+    
+    updateDisplay();
+    update();
   }
 
   Future<void> getHomePageData() async {
-    homePageData.clear();
-    groupList.clear();
+    groupData.clear();
+    projectsData.clear();
 
-    await DatabaseServiceController.instance.userDataRef.get().then(
-      (snapshot) {
-        snapshot.children.toList().forEach(
-          (element) async {
-            String groupID = element.value.toString();
-            await DatabaseServiceController.instance.database.ref("groups/$groupID").get().then(
-              (groupSnapshot) {
-                String groupTitle = groupSnapshot.child("title").value.toString();
-                
-                Map<String, String> projects = {};
+    await DatabaseServiceController.instance.userDataRef.get().then((groupKeyData) async {
+      for (int i = 0; i < groupKeyData.children.toList().length; i++) {
+        String id = groupKeyData.children.toList()[i].value.toString();
+        await DatabaseServiceController.instance.database.ref("groups/$id/title").get().then((value) {
+          groupData[id] = value.value.toString();
+        });
 
-                var projectsDatasnapshot = groupSnapshot.child('projects').children.toList();
+        await DatabaseServiceController.instance.database.ref("groups/$id/projects").get().then((projectsSnapshot) async {
+          Map<String, String> projects = {};
+          for (var i in projectsSnapshot.children) {
+            projects[i.child('id').value.toString()] = i.child("title").value.toString();
+          }
+          projectsData[id] = projects;
+        });
+      }
+    });
 
-                for (var projectElement in projectsDatasnapshot) {
-                  Map<String, String> temp = {projectElement.child('id').value.toString() : projectElement.child('title').value.toString()};
-                  projects.addAll(temp);
-                  // print("inside loop: $projects for group with name $groupTitle");
-                }
+    for(var e in groupData.entries) {
+      groupList[e.key] = Group(groupTitle: e.value, databaseID: e.key, cardData: projectsData[e.key] ?? {});
+    }
 
-                // print("outside loop: $projects for group with name $groupTitle");
-                Map<Map<String, String>, Map<String, String>> data = {<String, String>{groupID: groupTitle}: projects};
-                homePageData.addAll(data);
-              },
-            );
-          },
-        );
-      },
-    );
+    print(groupData);
+    print(projectsData);
   }
 }

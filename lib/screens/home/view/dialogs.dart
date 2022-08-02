@@ -124,8 +124,7 @@ class CardCreatorDialog extends StatelessWidget {
                             horizontal: 8.0, vertical: 10.0));
                   } else {
                     Get.back();
-                    homeController.addProject(
-                        groupID, titleController.text.trim());
+                    homeController.addProject(titleController.text.trim(), groupID);
                   }
                 },
                 style: ElevatedButton.styleFrom(primary: Colors.black),
@@ -167,8 +166,7 @@ class GroupDeleterDialog extends StatelessWidget {
         TextButton(
           onPressed: () {
             Get.back();
-            DatabaseServiceController.instance.removeGroup(
-                id: groupID, updateUI: homeController.updateDataColumn);
+            homeController.removeGroup(groupID);
           },
           child: const Text(
             "Do it 👍",
@@ -222,10 +220,11 @@ class CardDeleterDialog extends StatelessWidget {
         TextButton(
           onPressed: () {
             Get.back();
-            DatabaseServiceController.instance.removeProject(
-                projectID: projectID,
-                groupID: groupID,
-                updateUI: homeController.updateDataColumn);
+            // DatabaseServiceController.instance.removeProject(
+            //     projectID: projectID,
+            //     groupID: groupID,
+            //     updateUI: homeController.updateDataColumn);
+            homeController.removeProject(groupID, projectID);
           },
           child: const Text(
             "Do it 👍",
