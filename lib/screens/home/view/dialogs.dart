@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_manager/screens/home/controller/home_controller.dart';
-import 'package:task_manager/utils/firebase_database_service.dart';
 
 class GroupCreatorDialog extends StatelessWidget {
   const GroupCreatorDialog({Key? key}) : super(key: key);
@@ -220,10 +219,6 @@ class CardDeleterDialog extends StatelessWidget {
         TextButton(
           onPressed: () {
             Get.back();
-            // DatabaseServiceController.instance.removeProject(
-            //     projectID: projectID,
-            //     groupID: groupID,
-            //     updateUI: homeController.updateDataColumn);
             homeController.removeProject(groupID, projectID);
           },
           child: const Text(
